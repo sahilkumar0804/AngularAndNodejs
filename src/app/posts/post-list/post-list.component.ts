@@ -1,6 +1,7 @@
 import { Component, Injectable, Input, OnDestroy, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 
 import {Post} from "../../post"
 import { PostService } from '../post.service';
@@ -21,8 +22,11 @@ export class PostListComponent implements OnInit,OnDestroy {
   postsPerPage = 1;
   currentPage=1;
   pageSizeOptions =[1, 2, 3, 5];
+  userIsAuthenticated =false;
 
-  constructor(public postService : PostService) {
+  private authStatusSub!: Subscription;
+
+  constructor(public postService : PostService, private authService: AuthService) {
 
   }
 
@@ -41,6 +45,11 @@ export class PostListComponent implements OnInit,OnDestroy {
      * 2 error is emited
      * 3 observals is complicated ...
      */
+    this.userIsAuthenticated =this.authService.getIsAuth();
+    this.authStatusSub=this.authService.getAuthStatusListner()
+    .subscribe(isAuthenticated =>{
+        this.userIsAuthenticated = isAuthenticated;
+    });
   }
 
   onChangedPage(pageData: PageEvent){
@@ -54,6 +63,7 @@ export class PostListComponent implements OnInit,OnDestroy {
 
   ngOnDestroy(){
       this.postsSub?.unsubscribe();
+      this.authStatusSub.unsubscribe();
   }
 
   onDelete(post :Post ){

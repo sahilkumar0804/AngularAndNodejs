@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http'
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
@@ -20,6 +20,7 @@ import { PostListComponent } from './posts/post-list/post-list.component';
 import { PostService } from './posts/post.service';
 import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
+import { AuthInterceptor } from './auth/auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,9 @@ import { SignupComponent } from './auth/signup/signup.component';
     MatProgressSpinnerModule,
     HttpClientModule
   ],
-  providers: [PostService],
+  providers: [
+    PostService ,
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor , multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

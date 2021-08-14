@@ -21,7 +21,7 @@ mongoose.connect("mongodb+srv://angularapp:tsRmQHpebQCkWR1S@cluster0.cs0jl.mongo
 app.use((req,res,next)=>{
   res.setHeader("Access-Control-Allow-Origin",'*');
   res.setHeader("Access-Control-Allow-Headers",
-  "Origin, X-Requested-With, Content-Type, Accept"
+  "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   res.setHeader("Access-Control-Allow-Methods",
   "Get ,POST, PATCH, DELETE, OPTIONS ,PUT");
@@ -29,5 +29,7 @@ app.use((req,res,next)=>{
 });
 
 app.use("/api/posts", postsRoutes);
+app.use("/api/users", require('./routes/user'));
+
 
 module.exports = app;

@@ -2,6 +2,7 @@ const express =require('express');
 const multer =require('multer');
 
 const Post = require('../models/post');
+const checkAuth= require("../middleware/check-auth");
 
 const router = express.Router();
 
@@ -29,7 +30,10 @@ const storage= multer.diskStorage({
   }
 });
 
-router.post("",multer({storage : storage}).single('image'),(req,res)=>{
+router.post("",
+checkAuth,
+multer({storage : storage}).single('image'),
+(req,res)=>{
   const url =req.protocol +'://'+ req.get("host");
   const post =new Post({
     title : req.body.title,
@@ -49,7 +53,7 @@ router.post("",multer({storage : storage}).single('image'),(req,res)=>{
   });
 });
 
-router.get('',(req,res,next)=>{
+router.get('',(req,res)=>{
   const pageSize =+(req.query.pageSize);
   const currentPage =+req.query.page;
   const postQuery= Post.find();
@@ -62,7 +66,7 @@ router.get('',(req,res,next)=>{
   postQuery
   .then(document=>{
     fetchedPosts=document;
-     return Post.count();
+     return Post.countDocuments();
     })
     .then(count=>{
     res.json({
@@ -89,6 +93,7 @@ router.get("/:id",(req,res)=>{
 })
 
 router.put("/:id",
+checkAuth,
 multer({storage : storage}).single('image'),
 (req,res)=>{
   let imagePath =req.body.imagePath;
@@ -108,7 +113,9 @@ multer({storage : storage}).single('image'),
   });
 });
 
-router.delete("/:id",(req,res)=>{
+router.delete("/:id",
+checkAuth,
+(req,res)=>{
   Post.deleteOne({_id :req.params.id})
   .then(result=>{
     console.log("posts delted");

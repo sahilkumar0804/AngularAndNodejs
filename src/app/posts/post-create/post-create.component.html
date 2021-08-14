@@ -1,0 +1,62 @@
+<!-- 2 way binding  -->
+<!-- <mat-card> -->
+
+    <!-- <mat-form-field>
+      <input matInput type="input" [(ngModel)]="enteredTitle"/>
+    </mat-form-field>
+    <mat-form-field> -->
+
+      <!-- <textarea  rows="6" [value]= 'newPOst' #postInput></textarea> -->
+      <!-- <textarea matInput rows="6" [(ngModel)]="enteredContent"></textarea>
+
+    </mat-form-field>
+    <button
+     mat-raised-button
+     color="accent"
+     (click)="onAddPost()"> Save post</button> -->
+
+<!-- </mat-card> -->
+
+<mat-card>
+  <mat-spinner *ngIf ="isLoding"></mat-spinner>
+  <form
+  [formGroup]="form"
+  (submit)="onSavePost()"
+  *ngIf="!isLoding">
+    <mat-form-field>
+      <input
+      matInput
+      type="text"
+      formControlName="title"
+      placeholder="Post title"
+      />
+      <mat-error *ngIf="form.get('title')?.invalid">Please entred a title</mat-error>
+    </mat-form-field>
+    <div>
+      <button mat-stroked-button  type="button"
+      (click) ="filePicker.click()"
+      > Pick Image</button>
+      <input type="file"
+      #filePicker
+      (change)="onImagePicked($event)"
+      >
+    </div>
+    <div class="image-preview"
+    *ngIf="imagePreview !=='' && imagePreview && form.get('image')?.valid">
+      <img [src]="imagePreview" [alt]="form.value.title" />
+    </div>
+    <mat-form-field>
+      <textarea
+      matInput
+      rows='4'
+      placeholder="Post content"
+      formControlName="content"
+      ></textarea>
+    </mat-form-field>
+    <button
+    mat-raised-button
+    color='accent'
+    type="submit"
+    > Submit </button>
+  </form>
+</mat-card>

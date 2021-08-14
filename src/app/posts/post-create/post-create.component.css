@@ -4,11 +4,6 @@ textarea{
   width : 100%;
 }
 
-:host{
-  display: block;
-  margin-top:3rem;
-}
-
  mat-spinner{
    margin : auto;
  }

@@ -50,11 +50,25 @@ router.post("",multer({storage : storage}).single('image'),(req,res)=>{
 });
 
 router.get('',(req,res,next)=>{
-  Post.find()
+  const pageSize =+(req.query.pageSize);
+  const currentPage =+req.query.page;
+  const postQuery= Post.find();
+  let fetchedPosts;
+  if(pageSize && currentPage){
+    postQuery
+    .skip(pageSize * (currentPage - 1 ))
+    .limit(pageSize);
+  }
+  postQuery
   .then(document=>{
+    fetchedPosts=document;
+     return Post.count();
+    })
+    .then(count=>{
     res.json({
       message: 'Posts fetched seccesfully',
-      posts: document
+      posts: fetchedPosts,
+      maxPosts : count
     });
   })
   .catch(err=>{

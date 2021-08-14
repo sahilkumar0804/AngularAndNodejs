@@ -2,6 +2,7 @@ ul{
   list-style :none;
   padding: 0;
   margin: 0;
+  display: flex;
 }
 
 a{
@@ -9,6 +10,12 @@ a{
   color :white
 }
 
+
 .spacer{
-  flex: 1 auto;
+   flex: 1 1 auto !important;
+
+}
+
+mat-toolbar{
+  margin-bottom: 2rem;
 }

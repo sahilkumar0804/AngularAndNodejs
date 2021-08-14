@@ -9,31 +9,36 @@ import { Router } from '@angular/router';
 @Injectable({providedIn : 'root'})
 export class PostService {
   private posts : Post[] =[];
-  private postsUpdate =new Subject<Post []>();
+  private postsUpdate =new Subject<{posts :Post [] ,postCount : number}>();
 
 
   constructor(private http: HttpClient , private router : Router){
 
   }
-  getPosts(){
-   // return [...this.posts];
-    //return this.post
-    this.http.get<{message :string,posts: any[]}>(
-      'http://localhost:3000/api/posts'
+  getPosts(postPerPage : number, currentPage: number){
+    const queryParams ="pageSize="+ postPerPage +"&page="+currentPage;
+    this.http.get<{message :string,posts: any[], maxPosts: number}>(
+      'http://localhost:3000/api/posts?' + queryParams
       )
       .pipe(map(postData=>{
-        return postData.posts.map(post =>{
-          return {
-            title : post.title,
-            content :post.content,
-            id:post._id,
-            imagePath : post.imagePath
-          }
-        });
+        return {
+          posts : postData.posts.map(post =>{
+            return {
+              title : post.title,
+              content :post.content,
+               id:post._id,
+              imagePath : post.imagePath
+            }
+        }),
+        maxPosts: postData.maxPosts
+      }
       }))
     .subscribe((transFormedPosts)=>{
-      this.posts= transFormedPosts;
-      this.postsUpdate.next([...this.posts]);
+      this.posts= transFormedPosts.posts;
+      this.postsUpdate.next({
+        posts: [...this.posts] ,
+        postCount :transFormedPosts.maxPosts
+      });
 
     });
   }
@@ -70,19 +75,7 @@ export class PostService {
     this.http.
     put("http://localhost:3000/api/posts/"+ id, postData)
     .subscribe(response =>{
-      //have no effect on my posts app
-      const updatePosts =[...this.posts];
-      const oldPostIndex = updatePosts.findIndex( p => p.id === id);
-      const post: Post={
-        id :id,
-        title:title,
-        content: content,
-        imagePath : 'sahil'
-        // imagePath: response.imagePath
-      };
-      updatePosts[oldPostIndex] =post;
-      this.posts = updatePosts;
-      this.postsUpdate.next([...this.posts]);
+
       this.router.navigate(["/"]);
     });
   }
@@ -98,26 +91,13 @@ export class PostService {
       'http://localhost:3000/api/posts',
       postData)
     .subscribe((responseData)=>{
-      const post: Post ={
-        id: responseData.post.id,
-        title : title,
-        content: content,
-        imagePath: responseData.post.imagePath
-      };
-
-      this.posts.push(post);
-      this.postsUpdate.next([...this.posts]); //emits new value
       this.router.navigate(["/"]);
     });
   }
 
   deletePost(postID : String | null){
-    this.http.delete("http://localhost:3000/api/posts/"+ postID)
-    .subscribe(()=>{
-      const updatePosts = this.posts.filter(post=> post.id !==postID);
-      this.posts =updatePosts;
-      this.postsUpdate.next([...this.posts]);
-    });
+    return this.http.delete("http://localhost:3000/api/posts/"+ postID);
+
   }
 }
 

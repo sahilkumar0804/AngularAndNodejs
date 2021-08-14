@@ -1,0 +1,39 @@
+
+<mat-card>
+  <mat-spinner *ngIf="isLoding"></mat-spinner>
+  <!-- #LoginForm is local refernce -->
+  <form
+  (submit)="onLogin(loginForm)"
+  #loginForm="ngForm"
+  *ngIf="!isLoding">
+    <mat-form-field>
+      <input
+      matInput
+      type="email"
+      name='email'
+      ngModel
+      placeholder="E-mail"
+      #emailInput="ngModel"
+      required
+      email
+      />
+      <mat-error *ngIf="emailInput.invalid">Please entred a email</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+     <input type="password"
+     matInput
+     ngModel
+     name="password"
+     placeholder="Password"
+     #passworInput="ngModel"
+     required
+     />
+     <mat-error *ngIf="passworInput.invalid">Please entred a password</mat-error>
+    </mat-form-field>
+    <button
+    mat-raised-button
+    color='accent'
+    type="submit"
+    > Login </button>
+  </form>
+</mat-card>

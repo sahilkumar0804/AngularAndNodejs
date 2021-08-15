@@ -38,7 +38,9 @@ export class AuthService{
     }
     this.http.post("http://localhost:3000/api/users/signup",authData)
     .subscribe(response=>{
-      console.log(response);
+      this.router.navigate(['/']);
+    }, error=>{
+      this.authStatusListner.next(false);
     });
   }
 
@@ -66,9 +68,11 @@ export class AuthService{
         const now =new Date();
         const expirationDate =new Date(now.getTime() + expiresInDuration * 1000);
         this.saveAuthData(token, expirationDate ,this.userId);
-       this.router.navigate(["/create"]);
+       this.router.navigate(["/"]);
       }
 
+    },error=>{
+      this.authStatusListner.next(false);
     });
   }
 

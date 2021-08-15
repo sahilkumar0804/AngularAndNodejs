@@ -1,6 +1,8 @@
-import { Component, OnInit , EventEmitter, Output } from '@angular/core';
+import { Component, OnInit , EventEmitter, Output, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup , Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 
 import { Post } from '../../post';
 import { PostService } from '../post.service';
@@ -11,15 +13,21 @@ import  { mimeType } from './mime-type-validator'
   templateUrl: './post-create.component.html',
   styleUrls: ['./post-create.component.css']
 })
-export class PostCreateComponent implements OnInit {
+export class PostCreateComponent implements OnInit, OnDestroy {
 
   private mode = 'create';
   private postId!:string;
+  private authStatusSub!: Subscription;
+
   post! : Post;
   isLoding = false;
   form!:FormGroup;
   imagePreview!: string | ArrayBuffer | null;
-  constructor(public postService : PostService, public route :ActivatedRoute) { }
+  constructor(
+    public postService : PostService,
+    public route :ActivatedRoute,
+    private authService : AuthService
+    ) { }
 
   ngOnInit(): void {
     this.form =new FormGroup({
@@ -34,6 +42,7 @@ export class PostCreateComponent implements OnInit {
             validators:[Validators.required],
             asyncValidators : [ mimeType ]
           })
+
     });
     this.route.paramMap.subscribe((paramMap : ParamMap)=>{
         if(paramMap.has('postId')){
@@ -62,6 +71,11 @@ export class PostCreateComponent implements OnInit {
         }
 
     });
+    this.authStatusSub =this.authService.getAuthStatusListner()
+    .subscribe(authStatus=>{
+      this.isLoding =false;
+    })
+
   }
 
   // enteredTitle ='';
@@ -98,6 +112,10 @@ export class PostCreateComponent implements OnInit {
     };
     reader.readAsDataURL((file as Blob));
 
+  }
+
+  ngOnDestroy(){
+    this.authStatusSub.unsubscribe();
   }
 
 }

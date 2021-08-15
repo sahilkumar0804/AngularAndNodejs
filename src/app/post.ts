@@ -3,4 +3,5 @@ export class Post{
   title!: string
   content!: string
   imagePath!: string |null
+  creator!: string | null
 }

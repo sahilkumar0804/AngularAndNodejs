@@ -38,7 +38,8 @@ multer({storage : storage}).single('image'),
   const post =new Post({
     title : req.body.title,
     content :req.body.content,
-    imagePath : url + '/images/'+ req.file.filename
+    imagePath : url + '/images/'+ req.file.filename,
+    creator: req.userData.userId
   });
   post.save()
   .then(resut=>{
@@ -105,21 +106,33 @@ multer({storage : storage}).single('image'),
     _id : req.body.id,
     title: req.body.title,
     content: req.body.content,
-    imagePath: imagePath
+    imagePath: imagePath,
+    creator: req.userData.userId
   });
-  Post.updateOne({_id : req.params.id},post)
+  Post.updateOne({
+    _id : req.params.id,
+    creator: req.userData.userId
+  },post)
   .then(result=>{
-    res.json({message : 'Upade sucessfully!'});
+    if(result.nModified >0){
+       res.json({message : 'Upade sucessfully!'});
+    } else {
+      res.status(401).json({ message: 'not authorized' });
+    }
   });
 });
 
 router.delete("/:id",
 checkAuth,
 (req,res)=>{
-  Post.deleteOne({_id :req.params.id})
+  Post.deleteOne({_id :req.params.id, creator: req.userData.userId})
   .then(result=>{
-    console.log("posts delted");
-    res.json("sucessfuly deleted");
+    if(result.n >0){
+      res.json("sucessfuly deleted");
+   } else {
+     res.status(401).json({ message: 'not authorized' });
+   }
+
   });
 
 });

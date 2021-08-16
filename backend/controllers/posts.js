@@ -43,7 +43,7 @@ exports.updatePost =(req,res)=>{
     creator: req.userData.userId
   },post)
   .then(result=>{
-    if(result.nModified >0){
+    if(result.n >0){
        res.json({message : 'Upade sucessfully!'});
     } else {
       res.status(401).json({ message: 'not authorized' });

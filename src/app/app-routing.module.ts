@@ -6,12 +6,14 @@ import { SignupComponent } from './auth/signup/signup.component';
 import { PostCreateComponent } from './posts/post-create/post-create.component';
 import { PostListComponent } from './posts/post-list/post-list.component';
 
+
 const routes: Routes = [
   {path :'', component : PostListComponent},
   {path : 'create' , component : PostCreateComponent , canActivate: [AuthGard]},
   {path : 'edit/:postId' , component : PostCreateComponent, canActivate: [AuthGard]},
-  {path : 'login', component: LoginComponent},
-  {path : "signup", component: SignupComponent}
+  //{path : 'auth', loadChildren : './auth/auth.module'}
+  {path: 'login' ,component: LoginComponent },
+  {path: "signup", component: SignupComponent}
 ];
 
 @NgModule({

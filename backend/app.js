@@ -12,7 +12,7 @@ app.use(bodyParse.json());
 app.use(bodyParse.urlencoded({extend :false}));
 app.use("/images", express.static(path.join('backend/images')));
 
-mongoose.connect("mongodb+srv://angularapp:tsRmQHpebQCkWR1S@cluster0.cs0jl.mongodb.net/node-angular?retryWrites=true&w=majority",{useNewUrlParser: true})
+mongoose.connect("mongodb+srv://angularapp:"+process.env.Mongo_ATLAS_PW+"@cluster0.cs0jl.mongodb.net/node-angular?retryWrites=true&w=majority",{useNewUrlParser: true})
 .then(()=>{
   console.log("Connected to database");
 }).catch(()=>{
